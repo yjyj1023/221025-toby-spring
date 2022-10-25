@@ -36,7 +36,7 @@ class UserDaoTest {
     }
 
     @Test
-    void addAndSelect() throws SQLException, ClassNotFoundException {
+    void addAndSelect(){
 
         //컬럼삭제
         userDao.deleteAll();
@@ -51,7 +51,7 @@ class UserDaoTest {
     }
 
     @Test
-    void count() throws SQLException, ClassNotFoundException {
+    void count(){
 
         userDao.deleteAll();
         assertEquals(0,userDao.getCount());
@@ -66,7 +66,8 @@ class UserDaoTest {
         assertEquals(3,userDao.getCount());
 
     }
-    void getAll() throws SQLException {
+    @Test
+    void getAll(){
         userDao.deleteAll();
         List<User> users = userDao.getAll();
         assertEquals(0,users.size());
