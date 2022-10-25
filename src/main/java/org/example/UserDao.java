@@ -3,14 +3,15 @@ package org.example;
 import org.springframework.dao.EmptyResultDataAccessException;
 import user.User;
 
+import javax.sql.DataSource;
 import java.sql.*;
 import java.util.Map;
 
 public class UserDao {
-    private ConnectionMaker connectionMaker;
+    private DataSource dataSource;
 
-    public UserDao(ConnectionMaker connectionMaker) {
-        this.connectionMaker = connectionMaker;
+    public UserDao(DataSource dataSource) {
+        this.dataSource = dataSource;
     }
 
     public void add(User user) throws SQLException {
@@ -26,7 +27,7 @@ public class UserDao {
 
         try {
             //db접속
-            c = connectionMaker.makeConnection();
+            c = dataSource.getConnection();
 
             //sql을 담은 PreparedStatement 만들고 setString으로 값넣기
             ps = c.prepareStatement("SELECT id,name,password FROM users WHERE id = ?");
@@ -48,8 +49,6 @@ public class UserDao {
             if(user == null) throw new EmptyResultDataAccessException(1);
             return user;
 
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         } finally {
@@ -79,7 +78,7 @@ public class UserDao {
         ResultSet rs = null;
 
         try {
-            c = connectionMaker.makeConnection();
+            c = dataSource.getConnection();
             ps = c.prepareStatement("select count(*) from users");
 
             rs = ps.executeQuery();
@@ -87,8 +86,6 @@ public class UserDao {
 
             return rs.getInt(1);
 
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         } finally {
@@ -111,12 +108,10 @@ public class UserDao {
         Connection c = null;
         PreparedStatement ps = null;
         try {
-            c = connectionMaker.makeConnection();
+            c = dataSource.getConnection();
             ps = stmt.makePreparedStatement(c);
 
             ps.executeUpdate();
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         } finally {
