@@ -13,37 +13,10 @@ public class UserDao {
         this.connectionMaker = connectionMaker;
     }
 
-    public void add(User user) throws ClassNotFoundException, SQLException {
-        Connection c = null;
-        PreparedStatement ps = null;
+    public void add(User user) throws SQLException {
+        StatementStrategy st = new AddStatement(user);
 
-        try {
-            //db접속
-            c = connectionMaker.makeConnection();
-
-            //sql을 담은 PreparedStatement 만들고 setString으로 값넣기
-            ps = c.prepareStatement("INSERT INTO users(id, name, password) VALUES(?,?,?)");
-            ps.setString(1, user.getId());
-            ps.setString(2, user.getName());
-            ps.setString(3, user.getPassword());
-
-            //만들어진 PreparedStatement 실행하기
-            ps.executeUpdate();
-
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        } finally {
-            try {
-                ps.close();
-            } catch (SQLException e) {
-            }
-            try {
-                c.close();
-            } catch (SQLException e) {
-            }
-        }
+        jdbcContextWithStatementStrategy(st);
     }
 
     public User get(String id) throws ClassNotFoundException, SQLException {
@@ -139,7 +112,7 @@ public class UserDao {
         PreparedStatement ps = null;
         try {
             c = connectionMaker.makeConnection();
-            ps = new DeleteAllStatement().makePreparedStatement(c);
+            ps = stmt.makePreparedStatement(c);
 
             ps.executeUpdate();
         } catch (ClassNotFoundException e) {
