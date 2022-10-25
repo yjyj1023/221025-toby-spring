@@ -15,9 +15,18 @@ public class UserDao {
     }
 
     public void add(User user) throws SQLException {
-        StatementStrategy st = new AddStatement(user);
-
-        jdbcContextWithStatementStrategy(st);
+        // DB접속 (ex sql workbeanch실행)
+        jdbcContextWithStatementStrategy(new StatementStrategy() {
+            @Override
+            public PreparedStatement makePreparedStatement(Connection c) throws SQLException {
+                PreparedStatement pstmt = null;
+                pstmt = c.prepareStatement("INSERT INTO users(id, name, password) VALUES(?,?,?);");
+                pstmt.setString(1, user.getId());
+                pstmt.setString(2, user.getName());
+                pstmt.setString(3, user.getPassword());
+                return pstmt;
+            }
+        });
     }
 
     public User get(String id) throws ClassNotFoundException, SQLException {
@@ -67,9 +76,15 @@ public class UserDao {
         }
     }
 
-    public void deleteAll() throws SQLException, ClassNotFoundException {
-        StatementStrategy st = new DeleteAllStatement();
-        jdbcContextWithStatementStrategy(st);
+    public void deleteAll() throws SQLException{
+        // "delete from users"
+        jdbcContextWithStatementStrategy(new StatementStrategy() {
+            @Override
+            public PreparedStatement makePreparedStatement(Connection c) throws SQLException {
+                return c.prepareStatement("delete from users");
+            }
+
+        });
     }
 
     public int getCount() throws SQLException, ClassNotFoundException {
