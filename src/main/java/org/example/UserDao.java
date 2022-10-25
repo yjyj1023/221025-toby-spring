@@ -9,7 +9,7 @@ public class UserDao {
     private ConnectionMaker connectionMaker;
 
     public UserDao(ConnectionMaker connectionMaker) {
-        this.connectionMaker = new AWSConnectionMaker();
+        this.connectionMaker = connectionMaker;
     }
 
     public void add(User user) throws ClassNotFoundException, SQLException {

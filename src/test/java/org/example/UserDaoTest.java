@@ -14,8 +14,8 @@ class UserDaoTest {
 
     @Test
     void addAndSelect() throws SQLException, ClassNotFoundException {
-        ConnectionMaker connectionMaker = new AWSConnectionMaker();
-        UserDao userDao = new UserDao(connectionMaker);
+
+        UserDao userDao = new UserDaoFactory().awsUserDao();
         User user = new User("8", "EternityHwan","1123");
         userDao.add(user);
 
