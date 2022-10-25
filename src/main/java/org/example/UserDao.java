@@ -7,6 +7,7 @@ import user.User;
 
 import javax.sql.DataSource;
 import java.sql.*;
+import java.util.List;
 import java.util.Map;
 
 public class UserDao {
@@ -44,6 +45,19 @@ public class UserDao {
     public int getCount() throws SQLException, ClassNotFoundException {
         //queryForObject에 두번째 파라메터로 Integer.class를 넘겨줌으로써 int형의 데이터를 받아온다.
         return this.jdbcTemplate.queryForObject("select count(*) from users;", Integer.class);
+    }
+
+    public List<User> getAll() {
+        String sql = "select * from users order by id";
+        RowMapper<User> rowMapper = new RowMapper<User>() {
+            @Override
+            public User mapRow(ResultSet rs, int rowNum) throws SQLException {
+                User user = new User(rs.getString("id"), rs.getString("name"),
+                        rs.getString("password"));
+                return user;
+            }
+        };
+        return this.jdbcTemplate.query(sql, rowMapper);
     }
 
 }

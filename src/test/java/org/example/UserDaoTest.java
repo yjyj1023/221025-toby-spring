@@ -11,6 +11,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import user.User;
 
 import java.sql.SQLException;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -22,16 +23,20 @@ class UserDaoTest {
     ApplicationContext context;
 
     UserDao userDao;
+    User user1;
+    User user2;
+    User user3;
 
     @BeforeEach
     void setUp(){
         this.userDao = context.getBean("awsUserDao", UserDao.class);
+        user1 = new User("1","박성철","1234");
+        user2 = new User("2","이길원","1321");
+        user3 = new User("3","박범진","4321");
     }
 
     @Test
     void addAndSelect() throws SQLException, ClassNotFoundException {
-
-        User user1 = new User("1","박성철","1234");
 
         //컬럼삭제
         userDao.deleteAll();
@@ -48,10 +53,6 @@ class UserDaoTest {
     @Test
     void count() throws SQLException, ClassNotFoundException {
 
-        User user1 = new User("1","박성철","1234");
-        User user2 = new User("2","이길원","1321");
-        User user3 = new User("3","박범진","4321");
-
         userDao.deleteAll();
         assertEquals(0,userDao.getCount());
 
@@ -64,5 +65,16 @@ class UserDaoTest {
         userDao.add(user3);
         assertEquals(3,userDao.getCount());
 
+    }
+    void getAll() throws SQLException {
+        userDao.deleteAll();
+        List<User> users = userDao.getAll();
+        assertEquals(0,users.size());
+
+        userDao.add(user1);
+        userDao.add(user2);
+        userDao.add(user3);
+        users = userDao.getAll();
+        assertEquals(3,users.size());
     }
 }
