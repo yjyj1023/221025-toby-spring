@@ -1,6 +1,7 @@
 package org.example;
 
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,12 +21,17 @@ class UserDaoTest {
     @Autowired
     ApplicationContext context;
 
+    UserDao userDao;
+
+    @BeforeEach
+    void setUp(){
+        this.userDao = context.getBean("awsUserDao", UserDao.class);
+    }
+
     @Test
     void addAndSelect() throws SQLException, ClassNotFoundException {
 
         User user1 = new User("1","박성철","1234");
-
-        UserDao userDao = context.getBean("awsUserDao", UserDao.class);
 
         //컬럼삭제
         userDao.deleteAll();
@@ -41,7 +47,6 @@ class UserDaoTest {
 
     @Test
     void count() throws SQLException, ClassNotFoundException {
-        UserDao userDao = new UserDaoFactory().awsUserDao();
 
         User user1 = new User("1","박성철","1234");
         User user2 = new User("2","이길원","1321");
