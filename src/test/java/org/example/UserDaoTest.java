@@ -11,9 +11,11 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class UserDaoTest {
 
+
     @Test
     void addAndSelect() throws SQLException, ClassNotFoundException {
-        UserDao userDao = new AWSConnection();
+        SimpleConnectionMaker simpleConnectionMaker = new SimpleConnectionMaker();
+        UserDao userDao = new UserDao(simpleConnectionMaker);
         User user = new User("8", "EternityHwan","1123");
         userDao.add(user);
 

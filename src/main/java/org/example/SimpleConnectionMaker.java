@@ -1,14 +1,11 @@
 package org.example;
 
-import user.User;
-
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Map;
 
-public class LocalConnection extends UserDao {
-    @Override
+public class SimpleConnectionMaker {
     public Connection getConnection() throws ClassNotFoundException, SQLException {
         //환경 변수 불러오기
         Map<String, String> env = System.getenv();
@@ -22,4 +19,5 @@ public class LocalConnection extends UserDao {
         Connection c = DriverManager.getConnection(dbHost, dbUser,dbPassword);
         return c;
     }
+
 }

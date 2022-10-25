@@ -5,13 +5,15 @@ import user.User;
 import java.sql.*;
 import java.util.Map;
 
-public abstract class UserDao {
+public class UserDao {
+    private SimpleConnectionMaker simpleConnectionMaker;
 
-
-    public abstract Connection getConnection() throws ClassNotFoundException, SQLException;
+    public UserDao(SimpleConnectionMaker simpleConnectionMaker) {
+        this.simpleConnectionMaker = simpleConnectionMaker;
+    }
 
     public void add(User user) throws ClassNotFoundException, SQLException {
-        Connection c = getConnection();
+        Connection c = simpleConnectionMaker.getConnection();
 
         //sql을 담은 PreparedStatement 만들고 setString으로 값넣기
         PreparedStatement ps = c.prepareStatement("INSERT INTO users(id, name, password) VALUES(?,?,?)");
@@ -29,7 +31,7 @@ public abstract class UserDao {
     }
 
     public User get(String id) throws ClassNotFoundException, SQLException {
-        Connection c = getConnection();
+        Connection c = simpleConnectionMaker.getConnection();
 
         //sql을 담은 PreparedStatement 만들고 setString으로 값넣기
         PreparedStatement ps = c.prepareStatement("SELECT id,name,password FROM users WHERE id = ?");
