@@ -1,6 +1,7 @@
 package org.example;
 
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.JdbcTemplate;
 import user.User;
 
 import javax.sql.DataSource;
@@ -9,27 +10,17 @@ import java.util.Map;
 
 public class UserDao {
     private final DataSource dataSource;
-    private final JdbcContext jdbcContext;
+    private JdbcTemplate jdbcTemplate;
 
     public UserDao(DataSource dataSource) {
         this.dataSource = dataSource;
-        this.jdbcContext = new JdbcContext(dataSource);
+        this.jdbcTemplate = new JdbcTemplate(dataSource);
     }
 
     public void add(final User user) throws SQLException {
-        // DB접속 (ex sql workbeanch실행)
-        jdbcContext.workWithStatementStrategy(new StatementStrategy() {
-            @Override
-            public PreparedStatement makePreparedStatement(Connection c) throws SQLException {
-                PreparedStatement pstmt = null;
-                pstmt = c.prepareStatement("INSERT INTO users(id, name, password) VALUES(?,?,?);");
-                pstmt.setString(1, user.getId());
-                pstmt.setString(2, user.getName());
-                pstmt.setString(3, user.getPassword());
-                return pstmt;
-            }
-
-        });
+        //jdbcTemplate.update()의 경우 두번째부터 파라메터 개수 만큼 ?자리에 값을 넘길 수 있다.
+        this.jdbcTemplate.update("insert into users(id, name, password) values (?, ?, ?);",
+                user.getId(), user.getName(), user.getPassword());
     }
 
     public User get(String id) throws ClassNotFoundException, SQLException {
@@ -80,7 +71,7 @@ public class UserDao {
     }
 
     public void deleteAll() throws SQLException{
-        this.jdbcContext.executeSql("delete from users");
+        this.jdbcTemplate.update("delete from users");
     }
 
     public int getCount() throws SQLException, ClassNotFoundException {
