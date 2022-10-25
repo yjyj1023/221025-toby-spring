@@ -7,8 +7,7 @@ import java.util.Map;
 
 public class UserDao {
 
-    public void add(User user) throws ClassNotFoundException, SQLException {
-
+    private Connection getConnection() throws ClassNotFoundException, SQLException {
         //환경 변수 불러오기
         Map<String, String> env = System.getenv();
         String dbHost = env.get("DB_HOST");
@@ -19,6 +18,11 @@ public class UserDao {
 
         //db 연결을 위한 Connection 가져오기
         Connection c = DriverManager.getConnection(dbHost, dbUser,dbPassword);
+        return c;
+    }
+
+    public void add(User user) throws ClassNotFoundException, SQLException {
+        Connection c = getConnection();
 
         //sql을 담은 PreparedStatement 만들고 setString으로 값넣기
         PreparedStatement ps = c.prepareStatement("INSERT INTO users(id, name, password) VALUES(?,?,?)");
@@ -36,16 +40,7 @@ public class UserDao {
     }
 
     public User get(String id) throws ClassNotFoundException, SQLException {
-        //환경 변수 불러오기
-        Map<String, String> env = System.getenv();
-        String dbHost = env.get("DB_HOST");
-        String dbUser = env.get("DB_USER");
-        String dbPassword = env.get("DB_PASSWORD");
-
-        Class.forName("com.mysql.cj.jdbc.Driver");
-
-        //db 연결을 위한 Connection 가져오기
-        Connection c = DriverManager.getConnection(dbHost, dbUser,dbPassword);
+        Connection c = getConnection();
 
         //sql을 담은 PreparedStatement 만들고 setString으로 값넣기
         PreparedStatement ps = c.prepareStatement("SELECT id,name,password FROM users WHERE id = ?");
