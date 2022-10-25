@@ -101,7 +101,10 @@ public class UserDao {
 
         try {
             c = connectionMaker.makeConnection();
-            ps = c.prepareStatement("delete from users");
+
+            StatementStrategy strategy = new DeleteAllStatement();
+            ps = strategy.makePreparedStatement(c);
+
             ps.executeUpdate();
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
