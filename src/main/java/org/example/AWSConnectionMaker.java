@@ -5,8 +5,9 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Map;
 
-public class SimpleConnectionMaker {
-    public Connection getConnection() throws ClassNotFoundException, SQLException {
+public class AWSConnectionMaker implements ConnectionMaker{
+    @Override
+    public Connection makeConnection() throws ClassNotFoundException, SQLException {
         //환경 변수 불러오기
         Map<String, String> env = System.getenv();
         String dbHost = env.get("DB_HOST");
@@ -19,5 +20,4 @@ public class SimpleConnectionMaker {
         Connection c = DriverManager.getConnection(dbHost, dbUser,dbPassword);
         return c;
     }
-
 }
