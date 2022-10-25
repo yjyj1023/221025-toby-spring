@@ -8,15 +8,17 @@ import java.sql.*;
 import java.util.Map;
 
 public class UserDao {
-    private DataSource dataSource;
+    private final DataSource dataSource;
+    private final JdbcContext jdbcContext;
 
     public UserDao(DataSource dataSource) {
         this.dataSource = dataSource;
+        this.jdbcContext = new JdbcContext(dataSource);
     }
 
-    public void add(User user) throws SQLException {
+    public void add(final User user) throws SQLException {
         // DB접속 (ex sql workbeanch실행)
-        jdbcContextWithStatementStrategy(new StatementStrategy() {
+        jdbcContext.workWithStatementStrategy(new StatementStrategy() {
             @Override
             public PreparedStatement makePreparedStatement(Connection c) throws SQLException {
                 PreparedStatement pstmt = null;
@@ -26,6 +28,7 @@ public class UserDao {
                 pstmt.setString(3, user.getPassword());
                 return pstmt;
             }
+
         });
     }
 
